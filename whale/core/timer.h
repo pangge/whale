@@ -1,7 +1,9 @@
-#ifndef CUBASE_CUDA_TIMER_H
-#define CUBASE_CUDA_TIMER_H
+#ifndef WHALE_TIMER_H
+#define WHALE_TIMER_H
 
 #include "cubase_err.h"
+
+namespace whale {
 
 enum DeviceT{
     GPU,
@@ -62,7 +64,7 @@ struct ms_cast : time_cast<dst, ms> {
     ms_cast(float src_time): time_cast<dst, ms>(src_time) {}
 };
 
-template<DeviceT dev, Precision pres = ms>
+/*template<DeviceT dev, Precision pres = ms>
 struct Timer {
     Timer();
     ~Timer();
@@ -101,6 +103,8 @@ struct Timer<GPU, pres> {
         cuda(EventElapsedTime(&elapsedTimeMs, _start, _stop));
         return ms_cast<pres>(elapsedTimeMs);
     }
-};
+}; */
+
+}
 
 #endif

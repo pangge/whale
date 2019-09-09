@@ -1,5 +1,5 @@
-#ifndef CUBASE_TYPES_H
-#define CUBASE_TYPES_H
+#ifndef WHALE_TYPES_H
+#define WHALE_TYPES_H
 
 #include <unistd.h>
 #include <assert.h>
@@ -7,8 +7,28 @@
 #include <chrono>
 #include <random>
 
-#include "cudnn.h"
-#include "cublas_v2.h"
+//#include "cudnn.h"
+//#include "cublas_v2.h"
+
+namespace whale {
+
+struct Target {
+    enum Type {
+        X86,
+        CUDA,
+        ARM
+    };
+
+    Target() {};
+
+    Target(Type type):_type(type) {}
+    Target(const Target& target):_type(target._type) {}
+
+    operator Type {
+        return _type;
+    }
+    Type _type;
+};
 
 struct Layout {
     enum Type {
@@ -24,7 +44,7 @@ struct Layout {
     operator Type() {
        return _type;
     }
-
+#ifndef WITH_CUDA
     operator cudnnTensorFormat_t() {
         switch(_type) {
             case NCHW: return CUDNN_TENSOR_NCHW;
@@ -32,10 +52,11 @@ struct Layout {
             default: return CUDNN_TENSOR_NCHW_VECT_C;
         }
     }
-
+#endif
     Type _type;
 };
 
+#ifdef WITH_CUDA
 template<typename T>
 struct DataTraits {
     static constexpr cudnnDataType_t cudnn_type = CUDNN_DATA_FLOAT;
@@ -72,6 +93,7 @@ struct DataTraits<int8_t> {
     static constexpr cudnnDataType_t cudnn_type = CUDNN_DATA_INT8;
     static constexpr int size = sizeof(int8_t);
 };
+#endif
 
 struct transform_t  {
     enum op_t {
@@ -90,6 +112,7 @@ struct transform_t  {
         return _type;
     }
 
+#ifndef WITH_CUDA
     operator cublasOperation_t() {
         switch(_type) {
             case OP_N: return CUBLAS_OP_N;    
@@ -98,6 +121,10 @@ struct transform_t  {
             default: return CUBLAS_OP_N; // default CUBLAS_OP_N
         }
     }
+#endif
+
 };
+
+}
 
 #endif

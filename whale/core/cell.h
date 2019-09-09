@@ -1,11 +1,13 @@
-#ifndef CUBASE_CELL_H
-#define CUBASE_CELL_H
+#ifndef WHALE_CELL_H
+#define WHALE_CELL_H
 
 #include <cuda_runtime.h>
 #include <cuda.h>
 #include "timer.h"
 #include "shape.h"
 #include "types.h"
+
+namespace whale {
 
 template<typename T, int Dim>
 class Cell {
@@ -133,6 +135,8 @@ void random_gen(T& local_value, T min, T max) {
 template<typename T>
 void fill_value(T& local_value, T value) {
     local_value = value;
+}
+
 }
 
 #endif

@@ -3,11 +3,13 @@
  *				   and http://man7.org/linux/man-pages/man3/numa.3.html
  */
 
-#ifndef NUMA_H
-#define NUMA_H
+#ifndef WHALE_NUMA_H
+#define WHALE_NUMA_H
 
 #include <numa.h>
 #include <unistd.h>
+
+namespace whale {
 
 size_t chNUMAgetPageSize()
 {
@@ -66,5 +68,6 @@ void chNUMApageAlignedFreeHost( void *p )
     chNUMApageAlignedFree( p, bytes );
 }
 
+}
 
 #endif // NUMA_H

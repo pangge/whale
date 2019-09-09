@@ -1,5 +1,5 @@
-#ifndef CUBASE_SHAPE_H
-#define CUBASE_SHAPE_H
+#ifndef WHALE_SHAPE_H
+#define WHALE_SHAPE_H
 
 #include <unistd.h>
 #include <assert.h>
@@ -10,6 +10,8 @@
 #include <cuda_runtime.h>
 #include <cuda.h>
 #include "timer.h"
+
+namespace whale {
 
 template<int Dim>
 struct Shape {
@@ -213,5 +215,7 @@ void transform(T* data, Shape<4>& shape, std::vector<int> order) {
         }
     }
 } */
+
+}
 
 #endif
