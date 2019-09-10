@@ -3,13 +3,13 @@
 
 #include <unistd.h>
 #include <vector>
-#include <whale/core/types.h>
+#include "core/types.h"
 
 namespace whale {
 
 template<typename T>
 struct WhalePointer {
-    typedef vokid (*deleter) (T*);
+    typedef void (*deleter) (T*);
 
     WhalePointer(T* data, deleter del=nullptr):_data(data), _del(del) {}
 
@@ -17,7 +17,7 @@ struct WhalePointer {
 
     T* get() { return _data; }
     void reset(T* data, deleter del=nullptr) {
-        if(!del) deleter(_data);
+        if(!del) { _del(this->_data); }
         _data = data;
         _del = del;
     }
@@ -30,8 +30,6 @@ template<typename T>
 class Buffer {
 public:
     Buffer(Target target, size_t len = 0);
-    Buffer(const Buffer& buffer);
-
     ~Buffer(){}
 
     int realloc(size_t size);

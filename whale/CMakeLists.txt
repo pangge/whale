@@ -2,12 +2,11 @@
 set(WHALE ${WHALE_ROOT}/whale)
 set(WHALE_SRC "")
 
-wl_fetch_include_recursively(${WHALE}/core)
-wl_fetch_include_recursively(${WHALE}/operations)
+wl_fetch_include_recursively(${WHALE})
 
 # fetch source files
 wl_fetch_files_with_suffix(${WHALE}/core "cpp" WHALE_SRC)
-wl_fetch_files_with_suffix(${WHALE}//operations "cpp" WHALE_SRC)
+wl_fetch_files_with_suffix(${WHALE}/operation "cpp" WHALE_SRC)
 
 # build library
 if(BUILD_SHARED)

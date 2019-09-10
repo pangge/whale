@@ -13,38 +13,34 @@
 namespace whale {
 
 struct Target {
-    enum Type {
+    enum type {
         X86,
         CUDA,
         ARM
     };
 
-    Target() {};
+    Target() {}
 
-    Target(Type type):_type(type) {}
+    Target(type t):_type(t) {}
     Target(const Target& target):_type(target._type) {}
 
-    operator Type {
-        return _type;
-    }
-    Type _type;
+    operator type() { return _type; };
+    type _type;
 };
 
 struct Layout {
-    enum Type {
+    enum type {
         NCHW, 
         NHWC,
 	    NCHWCx
     };
-    Layout(){};
+    Layout(){}
 
-    Layout(Type type):_type(type) {}
+    Layout(type t):_type(t) {}
     Layout(const Layout& layout):_type(layout._type) {}
 
-    operator Type() {
-       return _type;
-    }
-#ifndef WITH_CUDA
+    operator type() { return _type; }
+#ifdef WITH_CUDA
     operator cudnnTensorFormat_t() {
         switch(_type) {
             case NCHW: return CUDNN_TENSOR_NCHW;
@@ -53,7 +49,7 @@ struct Layout {
         }
     }
 #endif
-    Type _type;
+    type _type;
 };
 
 #ifdef WITH_CUDA
@@ -112,7 +108,7 @@ struct transform_t  {
         return _type;
     }
 
-#ifndef WITH_CUDA
+#ifdef WITH_CUDA
     operator cublasOperation_t() {
         switch(_type) {
             case OP_N: return CUBLAS_OP_N;    

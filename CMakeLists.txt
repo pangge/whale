@@ -6,7 +6,7 @@ include_directories(${WHALE_ROOT}/whale)
 
 # compile options
 option(BUILD_DEBUG "debug or not" OFF)
-option(BUILD_SHARED "build shared or static lib" OFF)
+option(BUILD_SHARED "build shared or static lib" ON)
 
 # platform
 option(BUILD_MOBILE "build on android platform" ON)
@@ -43,3 +43,4 @@ endif()
 
 add_subdirectory(${WHALE_ROOT}/whale)
 add_subdirectory(${WHALE_ROOT}/tests)
+
