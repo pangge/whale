@@ -8,10 +8,9 @@
 
 namespace whale {
 
-template<typename T>
+template<typename T, typename Deleter=void>
 struct WhalePointer {
-    typedef (* deleter) (T*);
-    WhalePointer(T* data):_data(data) {}
+    WhalePointer(T* data, ):_data(data), _del(del) {}
 
     ~WhalePointer() { _del(_data); }
 
@@ -20,11 +19,11 @@ struct WhalePointer {
     void reset(T* data, Deleter del) {
         if(!del) { _del(this->_data); }
         _data = data;
-        _del = &del::operater;
+        _del = del;
     }
 private:
     T* _data;
-    deleter _del;
+    Deleter _del;
 };
 
 template<typename T>
