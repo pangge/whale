@@ -1,11 +1,10 @@
 #ifndef WHALE_CELL_H
 #define WHALE_CELL_H
 
-#include <cuda_runtime.h>
-#include <cuda.h>
-#include "timer.h"
-#include "shape.h"
-#include "types.h"
+#include "core/timer.h"
+#include "core/shape.h"
+#include "core/types.h"
+#include "core/buffer.h"
 
 namespace whale {
 
@@ -96,28 +95,24 @@ public:
 
     inline size_t size() { return _shape.count(); }
 
-    T*  h_data() { return _h_data.data(); }
+    T*  data() { return _data_ptr.get()->get(); }
 
-    T* d_data() { return _d_data; }
+    const T* data() const { return _data_ptr.get()->get(); }
 
-    const T* h_data() const { return _h_data.data(); }
-
-    const T* d_data() const { return _d_data; }
-
-private:
-    void _free() {
-        if(_d_data) { 
-            //std::cout<<"_free (" << size() * sizeof(T) / 1e6 << " MB) mem on gpu.\n";
-            cuda(Free(_d_data)); 
-        }
-    }
+//private:
+//    void _free() {
+//        if(_d_data) { 
+//            //std::cout<<"_free (" << size() * sizeof(T) / 1e6 << " MB) mem on gpu.\n";
+//            cuda(Free(_d_data)); 
+//        }
+//    }
 
 private:
     Shape<Dim> _shape;
     Layout _layout;
-    std::vector<T> _h_data;
-    T* _d_data{nullptr};
-    int _device_id;
+	std::shared_ptr<Buffer> _data_ptr;
+    //std::vector<T> _h_data;
+    //T* _d_data{nullptr};
 };
 
 ///////////////////////////////////  single value op functor ///////////////////////////

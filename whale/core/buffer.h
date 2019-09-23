@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <vector>
 #include "core/types.h"
+#include "core/check.h"
 
 namespace whale {
 
@@ -44,6 +45,7 @@ public:
 
     // get raw pointer
     T* get() { return _ptr.get(); }
+	const T* get() { return _ptr.get(); }
 
     Buffer(const Buffer& buffer) = delete;
     Buffer& operator=(const Buffer& buffer) = delete;
@@ -56,6 +58,11 @@ private:
 private:
     size_t _real_bytes{0};
 };
+
+int mem_cpy(Buffer& buf_dst, Buffer& buf_src);
+
+// deep copy from buf_src
+Buffer slice(const Buffer& buf_src, int start, int len);
 
 }
 
