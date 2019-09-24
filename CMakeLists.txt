@@ -9,9 +9,9 @@ option(BUILD_DEBUG "debug or not" OFF)
 option(BUILD_SHARED "build shared or static lib" ON)
 
 # platform
-option(BUILD_MOBILE "build on android platform" ON)
+option(BUILD_MOBILE "build on android platform" OFF)
 option(BUILD_GPU "build on " OFF)
-option(BUILD_X86 "build on x86 platform" OFF)
+option(BUILD_X86 "build on x86 platform" ON)
 
 # configure environment
 include(cmake/utils.cmake)
@@ -19,7 +19,7 @@ include(cmake/build.cmake)
 
 if(BUILD_MOBILE)
     add_definitions(-DBUILD_MOBILE)
-    option(WITH_ARM "" ON)
+    option(WITH_ARM "" OFF)
     if(WITH_ARM)
         add_definitions(-DWITH_ARM)
     endif()
@@ -30,7 +30,7 @@ if(BUILD_MOBILE)
 endif()
 
 if(BUILD_GPU)
-    option(WITH_CUDA "" ON)
+    option(WITH_CUDA "" OFF)
     if(WITH_CUDA)
         add_definitions(-DWITH_CUDA)
         include(cmake/cuda.cmake)

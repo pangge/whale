@@ -1,6 +1,7 @@
 #ifndef WHALE_CELL_H
 #define WHALE_CELL_H
 
+#include <memory.h>
 #include "core/timer.h"
 #include "core/shape.h"
 #include "core/types.h"
@@ -8,84 +9,54 @@
 
 namespace whale {
 
-template<typename T, int Dim>
+template<typename T, int Dim=4>
 class Cell {
 public:
-    Cell(Layout layout = Layout::NCHW):_layout(layout) {}
+    Cell(Target target=Target::Default, Layout layout = Layout::NCHW) {
+        _layout = layout;
+        _data_ptr = std::make_shared<Buffer<T>>(target, 0);
+    }
 
-    explicit Cell(const std::vector<int>& dims, Layout layout = Layout::NCHW) {
+    explicit Cell(const std::vector<int>& dims, Target target=Target::Default, Layout layout = Layout::NCHW) {
 	    _layout = layout;
         _shape.init(dims, dims.size());
-        Alloc(_shape);
+        _data_ptr = std::make_shared<Buffer<T>>(target, size());
     }
 
-    explicit Cell(const Shape<Dim>& shape, Layout layout = Layout::NCHW) {
-	_layout = layout;
-        Alloc(shape);
+    explicit Cell(const Shape<Dim>& shape, Target target=Target::Default, Layout layout = Layout::NCHW) {
+	    _layout = layout;
+        _shape = shape;
+        _data_ptr = std::make_shared<Buffer<T>>(target, size());
     }
 
-    ~Cell() { _free(); }
+    ~Cell() {}
 
 public:
 
     template<typename functor, typename ...ArgTs>
     void map_cpu(functor funcs, ArgTs ...args) {
+        Target tmp = target();
+        _data_ptr->switch_to(Target::Default);
         for(int i=0; i < size(); i++) {
-            funcs(h_data()[i], args...);
+            funcs(data()[i], args...);
         }
+        _data_ptr->switch_to(tmp);
     }
     
-    template<typename functor, typename ...ArgTs>
-    void map_all(functor funcs, ArgTs ...args) {
-        map_cpu(funcs, args...);
-        sync<GPU>();
-    }
-
     /*template<Layout::type LayoutT>
     void transform(int cx = 4){
         transform<LayoutT>(_h_data, _shape, std::vector<int> order);
     }*/
 
-    template<DeviceT DevT>
-    void sync() {
-        switch(DevT) {
-            case GPU: {
-                cuda(Memcpy(_d_data, h_data(), size()*sizeof(T), cudaMemcpyHostToDevice)); 
-            } break;
-            case CPU: {
-                cuda(Memcpy(h_data(), _d_data, size()*sizeof(T), cudaMemcpyDeviceToHost));
-            } break;
-            default: {
-                printf("ERROR: DevT(%d) not known!", DevT);                
-                exit(1);
-            }
-        }
-    }
+    void to(Target target) { _data_ptr->switch_to(target); }
 
-    template<DeviceT DevT>
-    void CopyFrom(Cell<T, Dim>& operand) {
-        switch(DevT) {
-            case GPU: {
-                assert(size() == operand.size());
-                cuda(Memcpy(_d_data, operand.d_data(), size()*sizeof(T), cudaMemcpyDeviceToDevice));
-            } break;
-            case CPU: {
-                printf("ERROR: cpu to cpu copy not support yet!");
-                exit(1);
-            } break;
-            default: { 
-                printf("ERROR: DevT(%d) not known!", DevT); 
-                exit(1); 
-            }
-        }
+    int CopyFrom(Cell<T, Dim>& operand) {
+        return whale::mem_cpy(*(_data_ptr.get()), *(operand._data_ptr.get()));
     }
 
     void Alloc(const Shape<Dim>& shape) {
         _shape = shape;
-        _h_data.resize(_shape.count());
-        _free();
-        cuda(GetDevice(&_device_id));
-        cuda(Malloc(&_d_data, _shape.count()*sizeof(T)));
+        _data_ptr->realloc(_shape.count());
     }
 
 public:
@@ -95,24 +66,16 @@ public:
 
     inline size_t size() { return _shape.count(); }
 
+    inline Target target() { return _data_ptr->target(); }
+
     T*  data() { return _data_ptr.get()->get(); }
 
     const T* data() const { return _data_ptr.get()->get(); }
 
-//private:
-//    void _free() {
-//        if(_d_data) { 
-//            //std::cout<<"_free (" << size() * sizeof(T) / 1e6 << " MB) mem on gpu.\n";
-//            cuda(Free(_d_data)); 
-//        }
-//    }
-
 private:
     Shape<Dim> _shape;
     Layout _layout;
-	std::shared_ptr<Buffer> _data_ptr;
-    //std::vector<T> _h_data;
-    //T* _d_data{nullptr};
+	std::shared_ptr<Buffer<T> > _data_ptr;
 };
 
 ///////////////////////////////////  single value op functor ///////////////////////////

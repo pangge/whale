@@ -7,8 +7,6 @@
 #include <chrono>
 #include <random>
 
-#include <cuda_runtime.h>
-#include <cuda.h>
 #include "timer.h"
 
 namespace whale {

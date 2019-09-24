@@ -32,7 +32,7 @@ endfunction()
 # recursively fetch include dir
 function(wl_fetch_include_recursively root_dir)
     if (IS_DIRECTORY ${root_dir})
-        wl_msg(INFO STR "include dir: ${root_dir}")
+        #wl_msg(INFO STR "include dir: ${root_dir}")
 		include_directories(${root_dir})
     endif()
 

@@ -2,6 +2,7 @@
 # fetch test files
 wl_fetch_files_with_suffix(${WHALE_ROOT}/tests "cpp" WHALE_TESTS)
 
+
 #foreach(SRC_NAME ${cuda_source})
 #    #unpack the dir "/"
 #    string(REPLACE "/" ";" SEXY_LIST ${SRC_NAME})

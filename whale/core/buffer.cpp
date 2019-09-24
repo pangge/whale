@@ -19,21 +19,16 @@ void aligned_free(void *p) {
     free(((void**)p)[-1]);
 }
 
-
-template<typename T, Target::type TargetType>
-struct Deleter {
-    void operator() (T* ptr){
-        aligned_free((void*)ptr);
-    }
-};
+template<typename T>
+void DeleterCPU(T* ptr) { 
+    aligned_free((void*)ptr);
+}
 
 #ifdef WITH_CUDA
 template<typename T>
-struct Deleter<T, Target::CUDA> {
-    void operator() (T* ptr){
-        // TODO
-    }
-};
+void DeleterCUDA(T* ptr) { 
+    cuda(Free(ptr));
+}
 #endif
 
 template<typename T>
@@ -47,21 +42,24 @@ int Buffer<T>::realloc(size_t size) {
     _bytes = size * sizeof(T);
     if(_bytes > _real_bytes) {
         _real_bytes = _bytes;
-        switch(_target) {
+        switch(_target.Type()) {
 #ifdef BUILD_X86
             case Target::X86: {
-                aligned_malloc(_real_bytes, 64) {
-                _ptr.reset(new T(size), Deleter<T, Target::X86>);
+                void* ptr = aligned_malloc(_real_bytes, 64);
+                _ptr.reset((T*)ptr, DeleterCPU);
             } break;
 #endif
 #ifdef WITH_CUDA
             case Target::CUDA: {
-                // TODO
+                void* ptr=nullptr;
+                cuda(Malloc(&ptr, _real_bytes);
+                _ptr.reset((T*)ptr, DeleterCUDA);
             } break;
 #endif
 #ifdef WITH_ARM
             case Target::ARM: {
-                _ptr.reset(new T(size), Deleter<T, Target::ARM>);
+                void* ptr = aligned_malloc(_real_bytes, 64);
+                _ptr.reset((T*)ptr, DeleterCPU);
             } break;
 #endif
             default: {
@@ -84,21 +82,25 @@ void Buffer<T>::switch_to(Target target) {
 
 template class Buffer<float>;
 
-int mem_cpy(Buffer& buf_dst, Buffer& buf_src) {
+template<typename T>
+int mem_cpy(Buffer<T>& buf_dst, Buffer<T>& buf_src) {
     if(buf_dst.target() == buf_src.target()) {
         buf_dst.realloc(buf_src.size());
         switch(buf_dst.target()) {
 #ifdef BUILD_X86
             case Target::X86: {
+                memcpy(buf_dst.get(), buf_src.get(), buf_src.bytes());
             } break;
 #endif
 #ifdef WITH_CUDA
             case Target::CUDA: {
-                // TODO
+                // D2D
+                cuda(Memcpy(buf_dst.get(), buf_src.get(), buf_src.bytes(), cudaMemcpyDeviceToDevice));
             } break;
 #endif
 #ifdef WITH_ARM
             case Target::ARM: {
+                memcpy(buf_dst.get(), buf_src.get(), buf_src.bytes());
             } break;
 #endif
             default: {
@@ -109,20 +111,14 @@ int mem_cpy(Buffer& buf_dst, Buffer& buf_src) {
         }
     } else {
         switch(buf_dst.target()) {
-#ifdef BUILD_X86
-            case Target::X86: {
-                if(buf_src.target() == Target::CUDA) {
-                    // D2H
-                } else {
-                }
+#if (defined BUILD_X86) and (defined WITH_CUDA)
+            case Target::X86 && (buf_src.target() == Target::CUDA): {
+                // D2H
+                cuda(Memcpy(buf_dst.get(), buf_src.get(), buf_src.bytes(), cudaMemcpyDeviceToHost));
             } break;
-#endif
-#ifdef WITH_CUDA
-            case Target::CUDA: {
-                if(buf_src.target() == Target::X86k) {
-                    // H2D
-                } else {
-                }
+            case Target::CUDA && (buf_src.target() == Target::X86k): {
+                // H2D
+                cuda(Memcpy(buf_dst.get(), buf_src.get(), buf_src.bytes(), cudaMemcpyHostToDevice));
             } break;
 #endif
             default: {
@@ -134,8 +130,15 @@ int mem_cpy(Buffer& buf_dst, Buffer& buf_src) {
     }
 }
 
+template<>
+int mem_cpy(Buffer<float>& buf_dst, Buffer<float>& buf_src);
+
 // deep copy from buf_src
-Buffer slice(const Buffer& buf_src, int start, int len) {
+template<typename T>
+Buffer<T> slice(const Buffer<T>& buf_src, int start, int len) { 
 }
+
+template<>
+Buffer<float> slice(const Buffer<float>& buf_src, int start, int len);
 
 }

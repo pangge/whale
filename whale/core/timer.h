@@ -1,8 +1,6 @@
 #ifndef WHALE_TIMER_H
 #define WHALE_TIMER_H
 
-#include "cubase_err.h"
-
 namespace whale {
 
 enum DeviceT{

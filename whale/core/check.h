@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#ifdef WITH_CUDA
 #include <cuda_runtime.h>
 #include <cuda.h>
 #include "cublas_v2.h"
@@ -91,5 +92,6 @@ inline const char* cubaseGetErrStr<cudnnStatus_t>(cudnnStatus_t status) {
         exit(1);                                                                            \
     }                                                                                       \
 } while (0);
+#endif
 
 #endif

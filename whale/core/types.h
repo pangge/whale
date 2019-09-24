@@ -18,13 +18,18 @@ struct Target {
         CUDA,
         ARM
     };
-
+#ifdef WITH_ARM
+    const static type Default = Target::ARM;
+#else
+    const static type Default = Target::X86;
+#endif
     Target() {}
 
     Target(type t):_type(t) {}
     Target(const Target& target):_type(target._type) {}
 
     operator type() { return _type; };
+    type Type() { return _type; }
     type _type;
 };
 

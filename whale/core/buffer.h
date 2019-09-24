@@ -10,17 +10,19 @@ namespace whale {
 
 template<typename T>
 struct WhalePointer {
-    typedef (* deleter) (T*);
+    typedef void(*deleter) (T* ptr);
     WhalePointer(T* data):_data(data) {}
 
     ~WhalePointer() { _del(_data); }
 
     T* get() { return _data; }
-    template<typename Deleter>
-    void reset(T* data, Deleter del) {
+
+    const T* get() const { return _data; }
+
+    void reset(T* data, deleter del) {
         if(!del) { _del(this->_data); }
         _data = data;
-        _del = &del::operater;
+        _del = del;
     }
 private:
     T* _data;
@@ -45,7 +47,7 @@ public:
 
     // get raw pointer
     T* get() { return _ptr.get(); }
-	const T* get() { return _ptr.get(); }
+	const T* get() const { return _ptr.get(); }
 
     Buffer(const Buffer& buffer) = delete;
     Buffer& operator=(const Buffer& buffer) = delete;
@@ -59,10 +61,10 @@ private:
     size_t _real_bytes{0};
 };
 
-int mem_cpy(Buffer& buf_dst, Buffer& buf_src);
+template<typename T> int mem_cpy(Buffer<T>& buf_dst, Buffer<T>& buf_src);
 
 // deep copy from buf_src
-Buffer slice(const Buffer& buf_src, int start, int len);
+template<typename T> Buffer<T> slice(const Buffer<T>& buf_src, int start, int len);
 
 }
 
