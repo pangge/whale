@@ -41,13 +41,14 @@ public:
     void switch_to(Target target);
 
     // get size with type T
-    size_t size() { return _bytes / sizeof(T); }
-    size_t bytes() { return _bytes; }
-    Target target() { return _target; }
+    inline size_t size() { return _bytes / sizeof(T); }
+    inline size_t bytes() { return _bytes; }
+    inline size_t rel_bytes() { return _real_bytes; }
+    inline Target target() { return _target; }
 
     // get raw pointer
-    T* get() { return _ptr.get(); }
-	const T* get() const { return _ptr.get(); }
+    inline T* get() { return _ptr.get(); }
+	inline const T* get() const { return _ptr.get(); }
 
     Buffer(const Buffer& buffer) = delete;
     Buffer& operator=(const Buffer& buffer) = delete;
@@ -61,10 +62,12 @@ private:
     size_t _real_bytes{0};
 };
 
-template<typename T> int mem_cpy(Buffer<T>& buf_dst, Buffer<T>& buf_src);
+template<typename T>
+int mem_cpy(Buffer<T>& buf_dst, Buffer<T>& buf_src);
 
 // deep copy from buf_src
-template<typename T> Buffer<T> slice(const Buffer<T>& buf_src, int start, int len);
+template<typename T>
+Buffer<T> slice(const Buffer<T>& buf_src, int start, int len);
 
 }
 

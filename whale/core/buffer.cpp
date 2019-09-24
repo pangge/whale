@@ -130,8 +130,7 @@ int mem_cpy(Buffer<T>& buf_dst, Buffer<T>& buf_src) {
     }
 }
 
-template<>
-int mem_cpy(Buffer<float>& buf_dst, Buffer<float>& buf_src);
+template<> int mem_cpy<float>(Buffer<float>& buf_dst, Buffer<float>& buf_src);
 
 // deep copy from buf_src
 template<typename T>

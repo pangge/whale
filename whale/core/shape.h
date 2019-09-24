@@ -6,6 +6,7 @@
 #include <vector>
 #include <chrono>
 #include <random>
+#include <initializer_list>
 
 #include "timer.h"
 
@@ -15,9 +16,14 @@ template<int Dim>
 struct Shape {
     Shape() {}
 
-    explicit Shape(std::vector<int>& dims) {
+    explicit Shape(const std::vector<int>& dims) {
         init(dims, dims.size());
     }
+
+    Shape(std::initializer_list<int> dims) {
+        init(dims, dims.size());
+    }
+
 
     Shape(const Shape<Dim>& other) {
         (*this) = other;

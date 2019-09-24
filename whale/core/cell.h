@@ -51,6 +51,8 @@ public:
     void to(Target target) { _data_ptr->switch_to(target); }
 
     int CopyFrom(Cell<T, Dim>& operand) {
+        _shape = operand.shape();
+        _layout = operand.layout();
         return whale::mem_cpy(*(_data_ptr.get()), *(operand._data_ptr.get()));
     }
 
@@ -61,10 +63,15 @@ public:
 
 public:
     inline Shape<Dim>& shape() { return _shape; }
+    inline Layout& layout() { return _layout; }
 
     inline int dim() { return Dim; }
 
     inline size_t size() { return _shape.count(); }
+
+    inline size_t bytes() { return _data_ptr->bytes(); }
+
+    inline size_t rel_bytes() { return _data_ptr->rel_bytes(); }
 
     inline Target target() { return _data_ptr->target(); }
 
