@@ -1,7 +1,7 @@
 #ifndef WHALE_CELL_H
 #define WHALE_CELL_H
 
-#include <memory.h>
+#include <memory>
 #include "core/timer.h"
 #include "core/shape.h"
 #include "core/types.h"
@@ -82,7 +82,7 @@ public:
 private:
     Shape<Dim> _shape;
     Layout _layout;
-	std::shared_ptr<Buffer<T> > _data_ptr;
+    std::shared_ptr<Buffer<T> > _data_ptr;
 };
 
 ///////////////////////////////////  single value op functor ///////////////////////////

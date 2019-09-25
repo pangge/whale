@@ -27,6 +27,6 @@ foreach(SRC_NAME ${WHALE_TESTS})
     string(REPLACE "." ";" SEXY_LIST ${TEST_CASE_NAME})
     list(GET SEXY_LIST 0 TEST_CASE_NAME)
     find_package(Threads)
-    cc_binary(${TEST_CASE_NAME} SRCS ${SRC_NAME} DEPS whale ${CMAKE_THREAD_LIBS_INIT})
+    cc_binary(${TEST_CASE_NAME} SRCS ${SRC_NAME} DEPS whale LINK_LIBS ${CMAKE_THREAD_LIBS_INIT})
 endforeach()
 

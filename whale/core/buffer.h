@@ -44,7 +44,7 @@ public:
     inline size_t size() { return _bytes / sizeof(T); }
     inline size_t bytes() { return _bytes; }
     inline size_t rel_bytes() { return _real_bytes; }
-    inline Target target() { return _target; }
+    inline Target::type target() { return _target; }
 
     // get raw pointer
     inline T* get() { return _ptr.get(); }

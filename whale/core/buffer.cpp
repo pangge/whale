@@ -1,3 +1,4 @@
+#include <cstring>
 #include "core/buffer.h"
 
 namespace whale {
@@ -89,7 +90,7 @@ int mem_cpy(Buffer<T>& buf_dst, Buffer<T>& buf_src) {
         switch(buf_dst.target()) {
 #ifdef BUILD_X86
             case Target::X86: {
-                memcpy(buf_dst.get(), buf_src.get(), buf_src.bytes());
+                std::memcpy(buf_dst.get(), buf_src.get(), buf_src.bytes());
             } break;
 #endif
 #ifdef WITH_CUDA
@@ -100,7 +101,7 @@ int mem_cpy(Buffer<T>& buf_dst, Buffer<T>& buf_src) {
 #endif
 #ifdef WITH_ARM
             case Target::ARM: {
-                memcpy(buf_dst.get(), buf_src.get(), buf_src.bytes());
+                std::memcpy(buf_dst.get(), buf_src.get(), buf_src.bytes());
             } break;
 #endif
             default: {
@@ -130,14 +131,14 @@ int mem_cpy(Buffer<T>& buf_dst, Buffer<T>& buf_src) {
     }
 }
 
-template<> int mem_cpy<float>(Buffer<float>& buf_dst, Buffer<float>& buf_src);
+template int mem_cpy<float>(Buffer<float>& buf_dst, Buffer<float>& buf_src);
 
 // deep copy from buf_src
 template<typename T>
 Buffer<T> slice(const Buffer<T>& buf_src, int start, int len) { 
 }
 
-template<>
+template
 Buffer<float> slice(const Buffer<float>& buf_src, int start, int len);
 
 }
