@@ -1,5 +1,5 @@
 project(whale)
-cmake_minimum_required(VERSION 3.2)
+cmake_minimum_required(VERSION 2.8)
 
 set(WHALE_ROOT ${PROJECT_SOURCE_DIR})
 include_directories(${WHALE_ROOT}/whale)
