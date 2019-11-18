@@ -17,9 +17,9 @@ function(wl_fetch_files_with_suffix search_dir suffix outputs)
 		endforeach()
 		set(${outputs} ${${outputs}} ${abs_dir} PARENT_SCOPE)
 	else()
-		#message(WARNING "wl_fetch_files_recursively ${BoldRed}failed${ColourReset}:\n"
-		#                "real_dir:${BoldYellow}${search_dir}${ColourReset}\n"
-		#                "suffix:*.${BoldYellow}${suffix}${ColourReset} \n")
+        wl_msg(WARN STR "wl_fetch_files_recursively ${BoldRed}failed${ColourReset}:\n"
+                        "real_dir:${BoldYellow}${search_dir}${ColourReset}\n"
+                        "suffix:*.${BoldYellow}${suffix}${ColourReset} \n")
 	endif()
 endfunction()
 

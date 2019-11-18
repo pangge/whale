@@ -6,7 +6,7 @@ if(BUILD_DEBUG)
 else()
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -ldl -fPIC -O3 -Wno-sign-compare -Wno-narrowing -Wno-unused-command-line-argument")
 endif()
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfma -fopenmp -mavx512f -mavx512cd -mavx512er -mavx512pf")
+#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfma -fopenmp -mavx512f -mavx512cd -mavx512er -mavx512pf")
 
 # ----------------------------------------------------------------------------
 # section: build shared or static library

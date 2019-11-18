@@ -5,7 +5,7 @@ set(WHALE_ROOT ${PROJECT_SOURCE_DIR})
 include_directories(${WHALE_ROOT}/whale)
 
 # compile options
-option(BUILD_DEBUG "debug or not" OFF)
+option(BUILD_DEBUG "debug or not" ON)
 option(BUILD_SHARED "build shared or static lib" ON)
 
 # platform
