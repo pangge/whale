@@ -10,8 +10,10 @@ wl_fetch_files_with_suffix(${WHALE}/operation "cpp" WHALE_SRC)
 
 # build library
 if(BUILD_SHARED)
-    cc_library(whale SHARED SRCS ${WHALE_SRC} LINK_LIBS ${WHALE_LINK_LIBS})
+    find_package(Threads)
+    cc_library(whale SHARED SRCS ${WHALE_SRC} LINK_LIBS ${WHALE_LINK_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 else()
-    cc_library(whale STATIC SRCS ${WHALE_SRC} LINK_LIBS ${WHALE_LINK_LIBS})
+    find_package(Threads)
+    cc_library(whale STATIC SRCS ${WHALE_SRC} LINK_LIBS ${WHALE_LINK_LIBS} ${CMAKE_THREAD_LIBS_INIT})
 endif()
 

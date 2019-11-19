@@ -6,11 +6,25 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 if(BUILD_DEBUG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -ldl -fPIC -O0 -g -Wno-sign-compare -Wno-narrowing -Wno-unused-command-line-argument")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -ldl -fPIC -O0 -g -Wno-sign-compare -Wno-narrowing -Wno-unused-command-line-argument -Wno-return-local-addr")
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -ldl -fPIC -O3 -Wno-sign-compare -Wno-narrowing -Wno-unused-command-line-argument")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -ldl -fPIC -O3 -Wno-sign-compare -Wno-narrowing -Wno-unused-command-line-argument -Wno-return-local-addr")
 endif()
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfma -fopenmp -mavx512f -mavx512cd -mavx512er -mavx512pf")
+
+macro(find_openmp) 
+    find_package(OpenMP REQUIRED) 
+    if(OPENMP_FOUND OR OpenMP_CXX_FOUND) 
+        set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}") 
+        set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}") 
+        wl_msg(INFO STR "Found openmp in ${OPENMP_INCLUDE_DIR}") 
+        wl_msg(INFO STR " |--openmp cflags: ${OpenMP_C_FLAGS}") 
+        wl_msg(INFO STR " |--openmp cxxflags: ${OpenMP_CXX_FLAGS}") 
+        wl_msg(INFO STR " |--openmp link flags: ${OpenMP_EXE_LINKER_FLAGS}") 
+    else() 
+        wl_msg(ERROR STR "Could not found openmp !") 
+    endif() 
+endmacro()
 
 # ----------------------------------------------------------------------------
 # section: build shared or static library

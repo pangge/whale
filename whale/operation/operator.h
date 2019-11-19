@@ -31,6 +31,7 @@ public:
         op_tmp->doc = doc;
         *((T*)(op_tmp->buffer)) = default_val;
         this->append(op_tmp, sizeof(T), doc);
+        return *this;
     }
 
     template<typename T>

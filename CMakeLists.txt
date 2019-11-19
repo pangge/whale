@@ -39,6 +39,11 @@ endif()
 
 if(BUILD_X86)
     add_definitions(-DBUILD_X86)
+    option(WITH_OMP "" ON)
+    if(WITH_OMP) 
+        add_definitions(-DWITH_OMP)
+        find_openmp()
+    endif()
 endif()
 
 add_subdirectory(${WHALE_ROOT}/whale)

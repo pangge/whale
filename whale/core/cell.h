@@ -12,19 +12,19 @@ namespace whale {
 template<typename T, int Dim=4>
 class Cell {
 public:
-    Cell(Target target=Target::Default, Layout layout = Layout::NCHW) {
-        _layout = layout;
+    Cell(Target target=Target::Default) {
+        _layout = LayoutTraits<Dim>::Default;
         _data_ptr = std::make_shared<Buffer<T>>(target, 0);
     }
 
-    explicit Cell(const std::vector<int>& dims, Target target=Target::Default, Layout layout = Layout::NCHW) {
-	    _layout = layout;
+    explicit Cell(const std::vector<int>& dims, Target target=Target::Default) {
+	    _layout = LayoutTraits<Dim>::Default;
         _shape.init(dims, dims.size());
         _data_ptr = std::make_shared<Buffer<T>>(target, size());
     }
 
-    explicit Cell(const Shape<Dim>& shape, Target target=Target::Default, Layout layout = Layout::NCHW) {
-	    _layout = layout;
+    explicit Cell(const Shape<Dim>& shape, Target target=Target::Default) {
+	    _layout = LayoutTraits<Dim>::Default;
         _shape = shape;
         _data_ptr = std::make_shared<Buffer<T>>(target, size());
     }
