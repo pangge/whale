@@ -30,8 +30,8 @@ int Gemm<T>::operator()(Cell<T, 4> A, Cell<T, 4> B, Cell<T, 4>C) {
                 for(int j=0; j<get<int>("n"); j++) {
                     T sum = 0;
                     for(int index=0; index<get<int>("k")/64; index++) {
-                        #pragma omp parallel num_threads(3)
-                        #pragma omp for
+                        //#pragma omp parallel num_threads(3)
+                        //#pragma omp for
                         for(int m =0; m < 64; m++) {
                             int idx = index*64 + m;
                             sum += A.data()[i*get<int>("k") + idx] * B.data()[idx*get<int>("n") + j];

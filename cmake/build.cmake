@@ -1,6 +1,10 @@
 # ----------------------------------------------------------------------------
 # section: compile flags
 # ----------------------------------------------------------------------------
+if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
+    set(CMAKE_MACOSX_RPATH 1)
+endif()
+
 if(BUILD_DEBUG)
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -ldl -fPIC -O0 -g -Wno-sign-compare -Wno-narrowing -Wno-unused-command-line-argument")
 else()

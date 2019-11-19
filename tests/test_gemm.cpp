@@ -30,7 +30,7 @@ void test_gemm() {
     gemm.get<int>("n") = n;
     gemm.get<int>("k") = k;
 
-    for(int i=0; i<10; i++) {
+    for(int i=0; i<1; i++) {
         gemm(A, B, C);
     }
     for(int i=0; i < 5; i++) {
