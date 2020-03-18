@@ -6,10 +6,21 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Darwin")
 endif()
 
 if(BUILD_DEBUG)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -ldl -fPIC -O0 -g -Wno-sign-compare -Wno-narrowing -Wno-unused-command-line-argument -Wno-return-local-addr")
+    wl_add_compile(GCC FLAGS -std=c++11 -Wall -ldl -fPIC)
+    wl_add_compile(GCC FLAGS -O0 -g)
 else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11 -Wall -ldl -fPIC -O3 -Wno-sign-compare -Wno-narrowing -Wno-unused-command-line-argument -Wno-return-local-addr")
+    wl_add_compile(GCC FLAGS -std=c++11 -Wall -ldl -fPIC)
+    wl_add_compile(GCC FLAGS -O3)
 endif()
+
+wl_add_compile(GCC FLAG -lncurses)
+wl_add_compile(GCC FLAG -Wno-sign-compare)
+wl_add_compile(GCC FLAG -Wno-narrowing)
+#wl_add_compile(GCC FLAG -Wno-unused-command-line-argument)
+wl_add_compile(GCC FLAG -Wno-return-local-addr)
+wl_add_compile(GCC FLAG -Wno-unused-variable)
+wl_add_compile(GCC FLAG -Wno-reorder)
+
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfma -fopenmp -mavx512f -mavx512cd -mavx512er -mavx512pf")
 
 macro(find_openmp) 

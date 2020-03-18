@@ -20,7 +20,7 @@ struct WhalePointer {
     const T* get() const { return _data; }
 
     void reset(T* data, deleter del) {
-        if(!del) { _del(this->_data); }
+        if(!_data) { _del(this->_data); }
         _data = data;
         _del = del;
     }

@@ -60,10 +60,17 @@ endmacro()
 
 
 set(ARCH 61 CACHE STRING "NV GPU arch" )
-if(BUILD_DEBUG)
-    set(CUDA_NVCC_FLAGS "-Xcompiler -fPIC -O0 -G -g -gencode arch=compute_${ARCH},code=sm_${ARCH} -Wno-deprecated-gpu-targets")
+# we can't use debug mode when use NVCC due to the bug of tensorflow : https://github.com/tensorflow/tensorflow/issues/22766
+if(BUILD_DEBUG) 
+    wl_add_compile(NVCC FLAGS -Xcompiler -fPIC -std=c++11)
+    wl_add_compile(NVCC FLAGS -O0 -G -g)
+    wl_add_compile(NVCC FLAG "-gencode arch=compute_${ARCH},code=sm_${ARCH}")
+    wl_add_compile(NVCC FLAG -Wno-deprecated-gpu-targets)
 else()
-    set(CUDA_NVCC_FLAGS "-Xcompiler -fPIC -O3 -gencode arch=compute_${ARCH},code=sm_${ARCH} -Wno-deprecated-gpu-targets")
+    wl_add_compile(NVCC FLAGS -Xcompiler -fPIC -std=c++11)
+    wl_add_compile(NVCC FLAGS -O3 -DNDEBUG)
+    wl_add_compile(NVCC FLAG "-gencode arch=compute_${ARCH},code=sm_${ARCH}")
+    wl_add_compile(NVCC FLAG -Wno-deprecated-gpu-targets)  
 endif()
 
 # find cuda 
