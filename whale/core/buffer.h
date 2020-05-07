@@ -29,11 +29,17 @@ private:
     deleter _del;
 };
 
+class MemBase {
+public:
+    MemBase() {}
+    virtual ~MemBase() = 0;
+};
+
 template<typename T>
-class Buffer {
+class Buffer : public MemBase {
 public:
     Buffer(Target target, size_t len = 0);
-    ~Buffer(){}
+    virtual ~Buffer() {}
 
     int realloc(size_t size);
 

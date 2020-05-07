@@ -32,8 +32,10 @@ void DeleterCUDA(T* ptr) {
 }
 #endif
 
+MemBase::~MemBase() {}
+
 template<typename T>
-Buffer<T>::Buffer(Target target, size_t len) {
+Buffer<T>::Buffer(Target target, size_t len):MemBase() {
     _target=target;
     this->realloc(len);
 }
@@ -129,6 +131,7 @@ int mem_cpy(Buffer<T>& buf_dst, Buffer<T>& buf_src) {
             } 
         }
     }
+    return 1;
 }
 
 template int mem_cpy<float>(Buffer<float>& buf_dst, Buffer<float>& buf_src);
