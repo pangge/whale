@@ -21,6 +21,7 @@ wl_add_compile(GCC FLAG -Wno-unused-command-line-argument)
 wl_add_compile(GCC FLAG -Wno-return-type)
 wl_add_compile(GCC FLAG -Wno-unused-variable)
 wl_add_compile(GCC FLAG -Wno-reorder)
+wl_add_compile(GCC FLAG -Wno-int-to-pointer-cast)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -mfma -fopenmp -mavx512f -mavx512cd -mavx512er -mavx512pf")
 

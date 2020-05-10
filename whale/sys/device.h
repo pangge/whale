@@ -1,13 +1,40 @@
 #pragma once
 
+#include "sys/bits.h"
+
+#include <unistd.h>
+#include <vector>
+#include <ostream>
+
 namespace whale {
 namespace sys {
 
-template<typename DevT>
-class DeviceBase : {
+template<class DevT>
+class DevInfo {
 public:
-    DeviceBase() noexcept {}
-    ~DeviceBase() = default;
+    enum ValType {
+        Boolean,
+        Integer,
+        String
+    };
+
+    DevInfo() noexcept {}
+    ~DevInfo() = default;
+
+    static const char* type() { return DevT::type; }
+
+    // create global instance, note that it is not thread safe
+    static DevT make() {
+        static DevT ins;
+        return ins;
+    }
+
+    virtual std::ostream& operator<<(std::ostream& os) {
+        return os;
+    }
+
+    std::string _vendor;
+    std::string _brand;
 };
 
 }
