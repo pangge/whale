@@ -1,5 +1,6 @@
 #pragma once
 
+#include <stdio.h>
 #include <type_traits>
 
 namespace whale {
@@ -84,7 +85,7 @@ public:
             __data = __data | (__WordT)0x1 << pos;
         } else {
             if((*this)[pos]) {
-                __data = __data - (__WordT)0x1 << pos;
+                __data = __data - ((__WordT)0x1 << pos);
             }
         }
     }
@@ -130,9 +131,8 @@ public:
 
     std::string get_str(int start, int end) {
         typename BitBase<N>::__WordT result = get_val(start, end);
-        int snprintf(char *str, size_t size, const char *format, ...);
-        char result_str[N/8/2];
-        snprintf(result_str, N/8/2, "%s", result);
+        char result_str[N/8];
+        *reinterpret_cast<int*>(result_str) = result;
         return std::string(result_str);
     }
 

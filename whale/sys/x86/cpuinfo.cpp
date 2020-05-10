@@ -20,21 +20,21 @@ struct CPUFeatureQuery {
         query_str_map query_str_func;
 
         Pack& register_query_bits(std::string key_of_leaf, query_bits_t func) {
-            if(query_bits_func.count(key_of_leaf)) {
+            if(!query_bits_func.count(key_of_leaf)) {
                 query_bits_func[key_of_leaf] = func;
             }
             return *this;
         }
 
         Pack& register_query_val(std::string key_of_leaf, query_val_t func) {
-            if(query_val_func.count(key_of_leaf)) {
+            if(!query_val_func.count(key_of_leaf)) {
                 query_val_func[key_of_leaf] = func;
             }
             return *this;
         }
 
         Pack& register_query_str(std::string key_of_leaf, query_str_t func) {
-            if(query_str_func.count(key_of_leaf)) {
+            if(!query_str_func.count(key_of_leaf)) {
                 query_str_func[key_of_leaf] = func;
             }
             return *this;
@@ -299,7 +299,7 @@ DECLARE_FEATURE_LEAF_WITH_SUB(7, 0)
     .REG_FEATURE(EDX, ssbd, 31);
 
 // Features in %eax for leaf 7 sub-leaf 1
-DECLARE_FEATURE_LEAF_WITH_SUB(7, 0)
+DECLARE_FEATURE_LEAF_WITH_SUB(7, 1)
     .REG_FEATURE(EAX, avx512_bf16, 5);
 
 // Features in %eax for leaf 13 sub-leaf 1
@@ -385,21 +385,21 @@ DECLARE_FEATURE_LEAF(0x80000001)
 
 // Features for leaf 0x80000002
 DECLARE_FEATURE_LEAF(0x80000002)
-    .REG_FEATURE_STR(EBX, brand_b, 0, 31)
-    .REG_FEATURE_STR(ECX, brand_c, 0, 31)
-    .REG_FEATURE_STR(EDX, brand_d, 0, 31);
+    .REG_FEATURE_STR(EBX, brand_b_2, 0, 31)
+    .REG_FEATURE_STR(ECX, brand_c_2, 0, 31)
+    .REG_FEATURE_STR(EDX, brand_d_2, 0, 31);
 
 // Features for leaf 0x80000003
 DECLARE_FEATURE_LEAF(0x80000003)
-    .REG_FEATURE_STR(EBX, brand_b, 0, 31)
-    .REG_FEATURE_STR(ECX, brand_c, 0, 31)
-    .REG_FEATURE_STR(EDX, brand_d, 0, 31);
+    .REG_FEATURE_STR(EBX, brand_b_3, 0, 31)
+    .REG_FEATURE_STR(ECX, brand_c_3, 0, 31)
+    .REG_FEATURE_STR(EDX, brand_d_3, 0, 31);
 
 // Features for leaf 0x80000004
 DECLARE_FEATURE_LEAF(0x80000004)
-    .REG_FEATURE_STR(EBX, brand_b, 0, 31)
-    .REG_FEATURE_STR(ECX, brand_c, 0, 31)
-    .REG_FEATURE_STR(EDX, brand_d, 0, 31);
+    .REG_FEATURE_STR(EBX, brand_b_4, 0, 31)
+    .REG_FEATURE_STR(ECX, brand_c_4, 0, 31)
+    .REG_FEATURE_STR(EDX, brand_d_4, 0, 31);
 
 // Features for leaf 0x80000006
 DECLARE_FEATURE_LEAF(0x80000006)
@@ -465,7 +465,6 @@ void CPUID::check(unsigned int leaf,
           : "=a"(eax.to_data()), "=r" (ebx.to_data()), "=c"(ecx.to_data()), "=d"(edx.to_data()) \
           : "0"(leaf));
 #endif
-    return true; 
 }
 
 void CPUID::check(unsigned int leaf, 
@@ -486,7 +485,6 @@ void CPUID::check(unsigned int leaf,
           : "=a"(eax.to_data()), "=r" (ebx.to_data()), "=c"(ecx.to_data()), "=d"(edx.to_data()) \
           : "0"(leaf), "2"(sub_leaf));
 #endif
-    return true; 
 }
 
 X86Info::X86Info() noexcept {
@@ -494,7 +492,7 @@ X86Info::X86Info() noexcept {
 
     auto query = [&](CPUFeatureQuery::Pack& pack) -> bool {
         bool ret = pack.query_leaf_func();
-        if(pack.query_leaf_func()){
+        if(!pack.query_leaf_func()){
             fprintf(stderr, "X86 CPUID cmd error!\n");
             exit(1);
         }
@@ -519,16 +517,17 @@ X86Info::X86Info() noexcept {
     // get highest_valid_function_id
     int highest_valid_function_id = get_val("highest_valid_function_id");
     // set vandor of cpu
-    _vendor = get_str("vendor_b") + get_str("vendor_c") + get_str("vendor_d");
+    _vendor = get_str("vendor_b") + get_str("vendor_d") + get_str("vendor_c");
 
     // get highest_extended_function_id
-    auto& leaf_0x80000000_pack = CPUFeatureQuery::Global().cpu_features["0x80000000NULL"];
+    auto& leaf_0x80000000_pack = CPUFeatureQuery::Global().cpu_features["0x80000000@NULL"];
     query(leaf_0x80000000_pack);
     int highest_extended_function_id = get_val("highest_extended_function_id");
 
     for(auto& it : CPUFeatureQuery::Global().cpu_features) { 
         int leaf = extract_leaf(it.first);
         if((leaf <= highest_valid_function_id) && (leaf > 0)) {
+            printf("get leaf: %d\n", leaf);
             auto& pack_tmp = CPUFeatureQuery::Global().cpu_features[it.first];
             query(pack_tmp);
         }
@@ -539,7 +538,9 @@ X86Info::X86Info() noexcept {
     }
     if(highest_extended_function_id >= 0x80000004) {
         // get brand info
-        _brand = get_str("brand_b") + get_str("brand_c") + get_str("brand_d");
+        _brand = get_str("brand_b_2") + get_str("brand_c_2") + get_str("brand_d_2");
+        _brand += get_str("brand_b_3") + get_str("brand_c_3") + get_str("brand_d_3");
+        _brand += get_str("brand_b_4") + get_str("brand_c_4") + get_str("brand_d_4");
     }
     // sort into ascending order
     std::sort(_cpu_features.begin(), _cpu_features.end());

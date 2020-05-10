@@ -29,10 +29,6 @@ public:
         return ins;
     }
 
-    virtual std::ostream& operator<<(std::ostream& os) {
-        return os;
-    }
-
     std::string _vendor;
     std::string _brand;
 };

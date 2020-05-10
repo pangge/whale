@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <iostream>
+#include <cassert>
 
 #include "sys/x86/cpuinfo.h"
 
@@ -41,7 +42,6 @@ void bits_test() {
         dest |= pattern;
     }
     assert(dest.to_data() == 39321);
-    return 0;
 }
 
 int main(void) {

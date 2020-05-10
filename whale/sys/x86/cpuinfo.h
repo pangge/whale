@@ -45,19 +45,19 @@ public:
     X86Info() noexcept;
     ~X86Info() = default;
 
-    virtual std::ostream& operator<<(std::ostream& os) override {
-        os << DebugStr();
-        return os;
-    }
+    friend std::ostream& operator<<(std::ostream& os, X86Info& info);
 
     std::string DebugStr() {
         std::stringstream info;
+        std::stringstream flags;
         info << "Vendor: " << _vendor << "\r\n";
         info << "   \t" << _brand << "\r\n";
         for(auto& feature : _cpu_features) {
             switch(_cpu_features_val_type[feature]) {
                 case Boolean: {
-                    info << feature << ":" << (support(feature) ? "yes":"no") << "\r\n";
+                    if(support(feature)) {
+                        flags<<feature<<" ";
+                    }
                 } break;
                 case Integer: {
                     info << feature << ":" << get_val(feature) << "\r\n";
@@ -65,6 +65,7 @@ public:
                 default:break;
             }
         }
+        info<<"Flags: \t" << flags.str() <<"\r\n";
         return info.str();
     }
 
@@ -108,7 +109,9 @@ private:
             return std::stoi(num_str);
         } else {
             std::string num_str  = std::string(leaf_name.begin()+2, leaf_name.begin() + pos);
-            return std::stoi(num_str);
+            int result;
+            sscanf(num_str.c_str(), "%x", &result); 
+            return result;
         }
     }
 
@@ -125,6 +128,11 @@ private:
     std::unordered_map<std::string, int> _cpu_features_val;
     std::unordered_map<std::string, std::string> _cpu_features_str;
 };
+
+std::ostream& operator<<(std::ostream& os, X86Info& info) {
+    os << info.DebugStr();
+    return os;
+}
 
 template<>
 void X86Info::insert<bool>(const std::string& feature, bool& val) {
